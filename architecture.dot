@@ -1,0 +1,27 @@
+digraph JIT_Architecture {
+  graph [rankdir=TB, fontname="Arial", fontsize=18, labelloc=t, nodesep=0.25, ranksep=0.55,
+         label="JustInTime – Layered Architecture (Sprint 1 draft)"];
+  node  [shape=box, style="rounded,filled", fillcolor="#EAF1FB", color="#2F5496", fontname="Arial", fontsize=12, width=1.9];
+  edge  [color="#404040", fontname="Arial", fontsize=10];
+
+  subgraph cluster_L1 { label="1. Presentation Layer – web app with role-based views"; style="rounded,filled"; fillcolor="#F7F9FC"; color="#1F3864"; fontsize=13;
+    v1[label="Marketing"]; v2[label="Production\n(PM / Prodee / PO)"]; v3[label="Floor\n(Floor Mgr / Stamper)"]; v4[label="Executive\ndashboard"]; }
+  subgraph cluster_L2 { label="2. Service Layer – REST API + WebSocket (middleware)"; style="rounded,filled"; fillcolor="#F7F9FC"; color="#1F3864"; fontsize=13;
+    s0[label="Auth & RBAC"]; s1[label="Order & Demand"]; s2[label="Product Lifecycle"]; s3[label="Inventory &\nProcurement"];
+    s4[label="Scheduling Engine"]; s5[label="Monitoring"]; s6[label="QC & Notification"]; s7[label="Reporting"];
+    {rank=same; s0; s1; s2; s3;} {rank=same; s4; s5; s6; s7;}
+    s0 -> s4 [style=invis]; }
+  subgraph cluster_L3 { label="3. Data Integration Layer – pooling & virtualisation"; style="rounded,filled"; fillcolor="#F7F9FC"; color="#1F3864"; fontsize=13;
+    d1[label="Data Access\n(ORM / repositories)"]; d2[label="Machine Data Ingestion\n(adapters + message queue)"]; }
+  subgraph cluster_L4 { label="4. Data Sources"; style="rounded,filled"; fillcolor="#F7F9FC"; color="#1F3864"; fontsize=13;
+    db[label="Operational DB\n(PostgreSQL)", shape=cylinder, style=filled];
+    ts[label="Machine telemetry\n(time-series table)", shape=cylinder, style=filled];
+    mw[label="Machine workstations\n(simulated)"]; lg[label="Legacy proprietary\nmachine software", style="rounded,dashed,filled"]; }
+
+  v2 -> s1 [label=" HTTPS / WSS", lhead=cluster_L2, ltail=cluster_L1];
+  s6 -> d1 [lhead=cluster_L3, ltail=cluster_L2];
+  d1 -> db; d2 -> ts;
+  d2 -> mw [label=" telemetry", dir=back]; d2 -> lg [label=" adapter (future)", style=dashed, dir=back];
+  note [shape=note, fillcolor="#FFF9DB", color="#999999", label="Deployed on cloud PaaS\n(app service + managed DB).\nMulti-plant ready: plant_id\nadded in later sprint."];
+  d1 -> note [style=invis]; s4 -> d2 [style=invis]; s7 -> d1 [style=invis];
+}
