@@ -1,0 +1,6 @@
+tests/test_api.py::test_health_endpoint_returns_ok PASSED                [ 20%]
+tests/test_api.py::test_roles_match_stakeholder_analysis PASSED          [ 40%]
+tests/test_models.py::test_all_erd_entities_have_tables PASSED           [ 60%]
+tests/test_models.py::test_stamper_can_hold_multiple_certifications PASSED [ 80%]
+tests/test_models.py::test_order_item_stores_customisation PASSED        [100%]
+========================= 5 passed, 1 warning in 0.32s =========================
