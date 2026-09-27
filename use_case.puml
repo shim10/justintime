@@ -1,0 +1,74 @@
+@startuml JIT_UseCase
+left to right direction
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam usecase {
+  BackgroundColor #EAF1FB
+  BorderColor #2F5496
+}
+skinparam rectangle {
+  BorderColor #1F3864
+}
+title JustInTime – Use Case Diagram (Sprint 1 draft)
+
+actor "Marketing Director" as MKT
+actor "Production Manager" as PM
+actor "Product Engineer\n(Prodee)" as PE
+actor "Production Operative\n(PO)" as PO
+actor "Floor Manager" as FM
+actor "Stamper" as ST
+actor "Machine Workstation\n<<system>>" as MW
+actor "Supplier\n<<external>>" as SUP
+
+rectangle "JustInTime MRP System" {
+  usecase "Log in / authenticate" as UC0
+  usecase "Record customer order" as UC1
+  usecase "View weekly demand &\nshipping schedule" as UC2
+  usecase "Estimate short-term sales" as UC3
+  usecase "Upload design deliverables\n(drawing, spec, instruction)" as UC4
+  usecase "Quality-check production batch" as UC5
+  usecase "Halt / resume batch" as UC6
+  usecase "Perform stock diagnosis" as UC7
+  usecase "Place purchase order" as UC8
+  usecase "Check design vs materials\n& machine capability" as UC9
+  usecase "Prepare & dispatch\nmaterial batches" as UC10
+  usecase "Manage machines &\nStamper certifications" as UC11
+  usecase "Generate timetable,\njob sheets & job cards" as UC12
+  usecase "Check Stamper certification" as UC13
+  usecase "Monitor machines in real time" as UC14
+  usecase "View job sheet & job cards" as UC15
+  usecase "Update job status" as UC16
+  usecase "Stream machine data" as UC17
+  usecase "Raise problem notification" as UC18
+  usecase "Generate reports" as UC19
+}
+
+MKT -- UC1
+MKT -- UC2
+MKT -- UC3
+PE -- UC4
+PE -- UC5
+PE -- UC6
+PM -- UC7
+PM -- UC8
+PM -- UC6
+PM -- UC19
+PO -- UC9
+PO -- UC8
+PO -- UC10
+PO -- UC14
+PO -- UC18
+FM -- UC11
+FM -- UC12
+FM -- UC14
+FM -- UC19
+ST -- UC15
+ST -- UC16
+UC17 -- MW
+UC8 -- SUP
+
+UC12 ..> UC13 : <<include>>
+UC8 ..> UC7 : <<extend>>
+UC18 .> UC14 : <<extend>>
+note right of UC0 : All human actors\nauthenticate (RBAC)
+@enduml
