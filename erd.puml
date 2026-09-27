@@ -1,0 +1,173 @@
+@startuml JIT_ERD
+hide circle
+hide methods
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #2F5496
+  HeaderBackgroundColor #D9E2F3
+}
+title JustInTime – Entity Relationship Diagram (Sprint 1 draft)
+
+entity User {
+  *user_id : PK
+  name
+  email
+  role : ENUM[Marketing, ProdManager, Prodee, PO, FloorManager, Stamper]
+  password_hash
+}
+entity MachineType {
+  *type_id : PK
+  name : e.g. stamping, coating, cutting
+}
+entity Machine {
+  *machine_id : PK
+  type_id : FK
+  model
+  max_capacity_per_hour
+  status : ENUM[available, running, maintenance, fault]
+}
+entity Certification {
+  *cert_id : PK
+  stamper_id : FK User
+  type_id : FK
+  issued_on
+  expires_on
+}
+entity ProductLine {
+  *line_id : PK
+  name : e.g. Chive TX5, Rosemary TS1
+}
+entity Product {
+  *product_id : PK
+  line_id : FK
+  name
+  version
+}
+entity DesignDocument {
+  *doc_id : PK
+  product_id : FK
+  doc_type : ENUM[drawing, specification, instruction]
+  file_url
+  uploaded_by : FK User
+  version
+}
+entity Material {
+  *material_id : PK
+  name
+  unit
+  stock_qty
+  reorder_level
+}
+entity BillOfMaterial {
+  *product_id : FK
+  *material_id : FK
+  qty_per_unit
+}
+entity Supplier {
+  *supplier_id : PK
+  name
+  contact
+  lead_time_days
+}
+entity PurchaseOrder {
+  *po_id : PK
+  supplier_id : FK
+  raised_by : FK User
+  status
+  created_at
+}
+entity PurchaseOrderLine {
+  *po_id : FK
+  *material_id : FK
+  qty
+  unit_price
+}
+entity CustomerOrder {
+  *order_id : PK
+  customer_name
+  due_date
+  status
+}
+entity OrderItem {
+  *item_id : PK
+  order_id : FK
+  product_id : FK
+  qty
+  colour
+  size
+  lid_handle_material
+  signature_text
+}
+entity ProductionBatch {
+  *batch_id : PK
+  order_item_id : FK
+  status : ENUM[planned, in_progress, halted, done]
+}
+entity JobSheet {
+  *sheet_id : PK
+  stamper_id : FK User
+  shift_date
+  shift_no : 1 or 2
+  prepared_by : FK User
+}
+entity JobCard {
+  *job_id : PK
+  sheet_id : FK
+  batch_id : FK
+  machine_id : FK
+  design_doc_id : FK
+  task
+  start_time
+  end_time
+  status
+}
+entity MachineReading {
+  *reading_id : PK
+  machine_id : FK
+  job_id : FK
+  timestamp
+  cycle_speed
+  output_count
+  fault_code
+}
+entity QualityCheck {
+  *qc_id : PK
+  batch_id : FK
+  checked_by : FK User
+  result : ENUM[pass, fail]
+  notes
+}
+entity Notification {
+  *notif_id : PK
+  recipient_id : FK User
+  type
+  message
+  created_at
+  is_read
+}
+
+MachineType ||--o{ Machine
+MachineType ||--o{ Certification
+User ||--o{ Certification : holds
+ProductLine ||--o{ Product
+Product ||--o{ DesignDocument
+Product ||--o{ BillOfMaterial
+Material ||--o{ BillOfMaterial
+Supplier ||--o{ PurchaseOrder
+PurchaseOrder ||--|{ PurchaseOrderLine
+Material ||--o{ PurchaseOrderLine
+CustomerOrder ||--|{ OrderItem
+Product ||--o{ OrderItem
+OrderItem ||--o{ ProductionBatch
+User ||--o{ JobSheet : assigned
+JobSheet ||--|{ JobCard
+ProductionBatch ||--o{ JobCard
+Machine ||--o{ JobCard
+DesignDocument ||--o{ JobCard
+Machine ||--o{ MachineReading
+JobCard ||--o{ MachineReading
+ProductionBatch ||--o{ QualityCheck
+User ||--o{ Notification
+@enduml
